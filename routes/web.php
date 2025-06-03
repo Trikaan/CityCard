@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\TicketTypeController;
 use App\Http\Controllers\Admin\TransportController;
@@ -24,11 +25,14 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin routes
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
-    Route::resource('cities', CityController::class);
-    Route::resource('transport-types', TransportTypeController::class);
-    Route::resource('transports', TransportController::class);
-    Route::resource('ticket-types', TicketTypeController::class);
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+        Route::resource('cities', CityController::class);
+        Route::resource('transport-types', TransportTypeController::class);
+        Route::resource('transports', TransportController::class);
+        Route::resource('ticket-types', TicketTypeController::class);
+    });
 });
 
 Route::middleware('auth')->group(function () {
